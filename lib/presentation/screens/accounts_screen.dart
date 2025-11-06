@@ -1,31 +1,55 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:go_router/go_router.dart';
-import '../../core/theme/theme_mode_provider.dart';
+import 'package:drift/drift.dart';
+import '../../data/database/db_providers.dart';
+import 'package:budget_buddy/data/database/tables/account.dart';
+import 'package:budget_buddy/data/database/app_database.dart';
 
 class AccountsScreen extends ConsumerWidget {
   const AccountsScreen({super.key});
+
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final mode = ref.watch(themeModeProvider); // ThemeMode courant
+    final dao = ref.watch(accountDaoProvider);
     return Scaffold(
-      appBar: AppBar(
-        title: const Text('Comptes'),
-        actions: [
-          IconButton(
-            tooltip: 'Basculer clair/sombre',
-            onPressed: () => ref.read(themeModeProvider.notifier).toggle(),
-            icon: Icon(
-              mode == ThemeMode.dark ? Icons.dark_mode : Icons.light_mode,
+      appBar: AppBar(title: const Text('Comptes')),
+      floatingActionButton: FloatingActionButton(
+        onPressed: () async {
+          await dao.insertAccount(
+            AccountsCompanion.insert(
+              name: 'Compte courant',
+              type: AccountType.checking,
+              currency: Value('EUR'),
+              initialBalance: Value(500.0),
+              isArchived: Value(false),
+              colorHex: Value('4280391411'),
             ),
-          ),
-          IconButton(
-            onPressed: () => context.push('/settings'),
-            icon: const Icon(Icons.settings_outlined),
-          ),
-        ],
+          );
+        },
+        child: const Icon(Icons.add),
       ),
-      body: const Center(child: Text('Comptes')),
+      body: StreamBuilder(
+        stream: dao.watchAll(),
+        builder: (context, snapshot) {
+          final items = snapshot.data ?? [];
+          if (items.isEmpty) {
+            return const Center(
+              child: Text('Aucun compte. Clique + pour en créer un.'),
+            );
+          }
+          return ListView.builder(
+            itemCount: items.length,
+            itemBuilder: (context, i) {
+              final a = items[i];
+              return ListTile(
+                title: Text(a.name),
+                subtitle: Text('${a.type.name.toUpperCase()} • ${a.currency}'),
+                trailing: Text(a.initialBalance.toStringAsFixed(2)),
+              );
+            },
+          );
+        },
+      ),
     );
   }
 }

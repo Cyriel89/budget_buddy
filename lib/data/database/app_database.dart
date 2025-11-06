@@ -11,7 +11,7 @@ import 'daos/category_dao.dart';
 
 part 'app_database.g.dart';
 
-@DriftDatabase(tables: [Account, Category], daos: [AccountDao, CategoryDao])
+@DriftDatabase(tables: [Accounts, Categories], daos: [AccountDao, CategoryDao])
 class AppDatabase extends _$AppDatabase {
   AppDatabase() : super(_openConnection());
 
