@@ -6,12 +6,17 @@ import 'package:path/path.dart' as p;
 
 import 'tables/account.dart';
 import 'tables/category.dart';
+import 'tables/transaction.dart';
 import 'daos/account_dao.dart';
 import 'daos/category_dao.dart';
+import 'daos/transaction_dao.dart';
 
 part 'app_database.g.dart';
 
-@DriftDatabase(tables: [Accounts, Categories], daos: [AccountDao, CategoryDao])
+@DriftDatabase(
+  tables: [Accounts, Categories, Transactions],
+  daos: [AccountDao, CategoryDao, TransactionDao],
+)
 class AppDatabase extends _$AppDatabase {
   AppDatabase() : super(_openConnection());
 

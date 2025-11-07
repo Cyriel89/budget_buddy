@@ -4,8 +4,8 @@ import 'package:drift/drift.dart';
 
 enum TransactionType { income, expense, transfer }
 
-@TableIndex(name: 'idx_tx_account_date', columns: {'accountId', 'date'})
-@TableIndex(name: 'idx_tx_category', columns: {'categoryId'})
+@TableIndex(name: 'idx_tx_account_date', columns: {#accountId, #date})
+@TableIndex(name: 'idx_tx_category', columns: {#categoryId})
 class Transactions extends Table {
   IntColumn get id => integer().autoIncrement()();
   DateTimeColumn get date => dateTime().withDefault(currentDateAndTime)();
