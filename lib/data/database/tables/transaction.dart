@@ -9,7 +9,7 @@ enum TransactionType { income, expense, transfer }
 class Transactions extends Table {
   IntColumn get id => integer().autoIncrement()();
   DateTimeColumn get date => dateTime().withDefault(currentDateAndTime)();
-  RealColumn get amount => real()();
+  RealColumn get amount => real().withDefault(const Constant(0.0))();
   TextColumn get description => text().nullable()();
   TextColumn get type => text().map(
     const EnumNameConverter<TransactionType>(TransactionType.values),

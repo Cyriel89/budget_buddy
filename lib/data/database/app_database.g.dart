@@ -839,7 +839,8 @@ class $TransactionsTable extends Transactions
     aliasedName,
     false,
     type: DriftSqlType.double,
-    requiredDuringInsert: true,
+    requiredDuringInsert: false,
+    defaultValue: const Constant(0.0),
   );
   static const VerificationMeta _descriptionMeta = const VerificationMeta(
     'description',
@@ -949,8 +950,6 @@ class $TransactionsTable extends Transactions
         _amountMeta,
         amount.isAcceptableOrUnknown(data['amount']!, _amountMeta),
       );
-    } else if (isInserting) {
-      context.missing(_amountMeta);
     }
     if (data.containsKey('description')) {
       context.handle(
@@ -1251,15 +1250,14 @@ class TransactionsCompanion extends UpdateCompanion<Transaction> {
   TransactionsCompanion.insert({
     this.id = const Value.absent(),
     this.date = const Value.absent(),
-    required double amount,
+    this.amount = const Value.absent(),
     this.description = const Value.absent(),
     required TransactionType type,
     required int accountId,
     this.categoryId = const Value.absent(),
     this.tags = const Value.absent(),
     this.createdAt = const Value.absent(),
-  }) : amount = Value(amount),
-       type = Value(type),
+  }) : type = Value(type),
        accountId = Value(accountId);
   static Insertable<Transaction> custom({
     Expression<int>? id,
@@ -2043,7 +2041,7 @@ typedef $$TransactionsTableCreateCompanionBuilder =
     TransactionsCompanion Function({
       Value<int> id,
       Value<DateTime> date,
-      required double amount,
+      Value<double> amount,
       Value<String?> description,
       required TransactionType type,
       required int accountId,
@@ -2421,7 +2419,7 @@ class $$TransactionsTableTableManager
               ({
                 Value<int> id = const Value.absent(),
                 Value<DateTime> date = const Value.absent(),
-                required double amount,
+                Value<double> amount = const Value.absent(),
                 Value<String?> description = const Value.absent(),
                 required TransactionType type,
                 required int accountId,

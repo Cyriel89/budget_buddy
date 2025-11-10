@@ -11,11 +11,13 @@ class TransactionDao extends DatabaseAccessor<AppDatabase>
 
   Future<int> insertTransaction(TransactionsCompanion entry) =>
       into(transactions).insert(entry);
-  Future<List<Transaction>> listByAccount(accountId) =>
+
+  Future<List<Transaction>> listByAccount(int accountId) =>
       (select(transactions)
             ..where((t) => t.accountId.equals(accountId))
             ..orderBy([(t) => OrderingTerm.desc(t.date)]))
           .get();
+
   Future<List<Transaction>> listByMonth(int year, int month) {
     final firstDay = DateTime(year, month, 1);
     final lastDay = DateTime(year, month + 1, 0, 23, 59, 59);
@@ -39,11 +41,16 @@ class TransactionDao extends DatabaseAccessor<AppDatabase>
         .getSingle();
   }
 
-  // watchByAccount(accountId)
-  Stream<List<Transaction>> watchByAccount(int accountId) => (select(
+  Stream<List<Transaction>> watchByAccount(int accountId) =>
+      (select(transactions)
+            ..where((t) => t.accountId.equals(accountId))
+            ..orderBy([(t) => OrderingTerm.desc(t.date)]))
+          .watch();
+
+  Stream<List<Transaction>> watchAllSorted() => (select(
     transactions,
-  )..where((t) => t.accountId.equals(accountId))).watch();
-  // watchSumByAccount(...)
+  )..orderBy([(t) => OrderingTerm.desc(t.date)])).watch();
+
   Stream<double> watchSumByAccount(
     int accountId, {
     DateTime? from,
