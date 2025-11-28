@@ -4,8 +4,12 @@ import 'core/theme/app_theme.dart';
 import 'presentation/routes/app_router.dart';
 import 'core/theme/theme_mode_provider.dart'; // <-- importe le provider partagé
 
-void main() {
+import 'package:intl/date_symbol_data_local.dart';
+import 'package:intl/intl.dart';
+
+void main() async {
   WidgetsFlutterBinding.ensureInitialized();
+  await initializeDateFormatting(Intl.systemLocale, null);
   runApp(const ProviderScope(child: BudgetBuddyApp()));
 }
 
