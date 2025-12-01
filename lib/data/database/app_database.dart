@@ -8,22 +8,24 @@ import 'tables/account.dart';
 import 'tables/category.dart';
 import 'tables/transaction.dart';
 import 'tables/budget.dart';
+import 'tables/recurring.dart';
 import 'daos/account_dao.dart';
 import 'daos/category_dao.dart';
 import 'daos/transaction_dao.dart';
 import 'daos/budget_dao.dart';
+import 'daos/recurring_dao.dart';
 
 part 'app_database.g.dart';
 
 @DriftDatabase(
-  tables: [Accounts, Categories, Transactions, Budgets],
-  daos: [AccountDao, CategoryDao, TransactionDao, BudgetDao],
+  tables: [Accounts, Categories, Transactions, Budgets, Recurrings],
+  daos: [AccountDao, CategoryDao, TransactionDao, BudgetDao, RecurringDao],
 )
 class AppDatabase extends _$AppDatabase {
   AppDatabase() : super(_openConnection());
 
   @override
-  int get schemaVersion => 3;
+  int get schemaVersion => 4;
 
   @override
   MigrationStrategy get migration => MigrationStrategy(
@@ -31,8 +33,8 @@ class AppDatabase extends _$AppDatabase {
       await m.createAll();
     },
     onUpgrade: (m, from, to) async {
-      if (from < 3) {
-        await m.createTable(budgets);
+      if (from < 4) {
+        await m.createTable(recurrings);
       }
     },
   );
